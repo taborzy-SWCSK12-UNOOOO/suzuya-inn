@@ -1,37 +1,374 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SUZUYA INN</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <main class="menu">
-    <div class="fog"></div>
-    <section class="title">
-      <p class="eyebrow">A SUZUYA INN EXPERIENCE</p>
-      <h1>SUZUYA<br><span>INN</span></h1>
-      <p class="subtitle">Something is still inside.</p>
-      <div class="buttons">
-        <button id="play">ENTER THE INN</button>
-        <button id="instructions">HOW TO PLAY</button>
-      </div>
-    </section>
-    <footer>WEB HORROR PROJECT · v0.1</footer>
-  </main>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SUZUYA INN — Escape Chiyo • v13</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#eee;font-family:Arial,sans-serif}#game{position:fixed;inset:0}canvas{display:block}
+#menu,#cut,#end,#scare{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle,#270709,#030303 70%)}.card{width:min(700px,90vw);padding:38px;background:#080606ee;border:1px solid #70252a;box-shadow:0 0 80px #60000055}.small{font-size:12px;letter-spacing:5px;color:#a84a4a}h1{font-size:clamp(45px,9vw,90px);letter-spacing:8px;margin:8px 0;color:#eee;text-shadow:0 0 25px #a00000}.sub{letter-spacing:8px;color:#d33;margin-bottom:25px}input,button{font:inherit}input{width:100%;padding:14px;background:#050505;border:1px solid #642329;color:#fff;text-align:center}button{margin-top:14px;padding:14px 22px;background:#82191d;color:#fff;border:1px solid #df4545;cursor:pointer;font-weight:bold;letter-spacing:2px}button:hover{background:#b52227}.hidden{display:none!important}#hud{position:fixed;inset:0;z-index:5;pointer-events:none;text-shadow:2px 2px 5px #000}#stats{position:absolute;top:18px;left:18px;line-height:1.7;min-width:240px}.bar{width:220px;height:10px;background:#130d0d;border:1px solid #5b3030;margin-top:4px;box-shadow:inset 0 0 8px #000}.bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#d7c39a,#fff0bf);box-shadow:0 0 10px #d7c39a;transition:width .08s linear}.bar.stam i{background:linear-gradient(90deg,#9d2020,#e6b06b);box-shadow:0 0 10px #b44}#cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:20px;color:#ffffff99}#msg{position:absolute;bottom:35px;left:50%;transform:translateX(-50%);width:min(760px,85vw);padding:14px;background:#000b;border-left:4px solid #b22}#v{position:absolute;inset:0;background:radial-gradient(circle,transparent 35%,#000b 100%)}#cutText{font-size:clamp(20px,3vw,32px);line-height:1.5;min-height:120px}#face{width:280px;height:340px;position:relative}.hair{position:absolute;inset:0 20px 0;background:#020202;border-radius:50% 50% 30% 30%}.head{position:absolute;left:55px;top:40px;width:170px;height:250px;background:#d8d3c9;border-radius:48%;box-shadow:inset 0 0 30px #777}.eye{position:absolute;top:85px;width:28px;height:55px;background:#000;border-radius:50%}.eye.l{left:38px}.eye.r{right:38px}.mouth{position:absolute;left:65px;bottom:35px;width:45px;height:80px;background:#000;border-radius:50%}#scare{animation:scareFlash .7s steps(1) infinite}#scare h2{color:#e00000;letter-spacing:7px;font-size:clamp(28px,6vw,65px);animation:shake .06s infinite alternate}@keyframes shake{to{transform:translate(-9px,5px) scale(1.05)}}@keyframes scareFlash{0%,100%{background:#000}10%{background:#eee}14%{background:#500}18%{background:#000}45%{background:#300}48%{background:#000}} 
 
-  <div id="instructionsPanel" class="panel hidden">
-    <div class="panel-box">
-      <button class="close">×</button>
-      <h2>HOW TO PLAY</h2>
-      <p>WASD — Move</p>
-      <p>SHIFT — Sprint</p>
-      <p>MOUSE — Look</p>
-      <p>Your flashlight will help you see. Chiyo will not always know where you are.</p>
-    </div>
-  </div>
+.cut-scene-bg{position:absolute;inset:-10%;background:linear-gradient(115deg,#030303,#170606 48%,#000);animation:scenePan 7s ease-in-out infinite alternate}.cut-fog{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 60%,#fff1 0,transparent 32%),radial-gradient(ellipse at 80% 30%,#fff1 0,transparent 25%);filter:blur(12px);animation:fogMove 5s ease-in-out infinite alternate}.cut-silhouette{position:absolute;left:65%;top:8%;width:130px;height:560px;background:#000;border-radius:55% 55% 20% 20%;filter:blur(2px);opacity:.75;transform:rotate(3deg);box-shadow:0 0 50px #000;animation:girlSway 2.4s ease-in-out infinite alternate}.cut-silhouette:before{content:"";position:absolute;left:-90px;top:45px;width:310px;height:250px;background:#000;border-radius:50%;opacity:.95}.cut-card{position:relative;z-index:2;animation:cardFloat 2.8s ease-in-out infinite alternate;background:#050505d9}.cut-card #cutText{animation:textFlicker .12s infinite alternate}@keyframes scenePan{from{transform:translateX(-2%) scale(1.04)}to{transform:translateX(2%) scale(1.1)}}@keyframes fogMove{from{transform:translateX(-5%);opacity:.35}to{transform:translateX(6%);opacity:.7}}@keyframes girlSway{from{transform:rotate(3deg) translateY(0)}to{transform:rotate(-4deg) translateY(8px)}}@keyframes cardFloat{from{transform:translateY(3px)}to{transform:translateY(-5px)}}@keyframes textFlicker{from{opacity:.93}to{opacity:1}}
 
-  <script type="module" src="js/menu.js"></script>
-</body>
-</html>
+.screen{display:none;position:absolute;inset:0;align-items:center;justify-content:center}.screen.active{display:flex}.title-card{position:relative;z-index:3}.title-art{position:absolute;inset:0;overflow:hidden;background:linear-gradient(#030305 0%,#090608 55%,#010101 100%)}.moon{position:absolute;width:190px;height:190px;border-radius:50%;right:12%;top:9%;background:#d9d4c9;box-shadow:0 0 60px #aaa5}.inn-silhouette{position:absolute;left:10%;right:10%;bottom:-2%;height:55%;background:linear-gradient(#0a0808,#000);clip-path:polygon(0 100%,0 43%,35% 43%,35% 25%,50% 5%,65% 25%,65% 43%,100% 43%,100% 100%);box-shadow:0 -30px 70px #000}.inn-silhouette:after{content:"";position:absolute;left:47%;top:43%;width:6%;height:35%;background:#250607;box-shadow:-120px 30px 0 -8px #5a1919,120px 30px 0 -8px #5a1919}.title-card{background:#050505d8}.music-row{margin-top:18px;text-align:left}.music-row label{display:block;color:#999;font-size:11px;letter-spacing:2px;margin-bottom:5px}.music-row input{font-size:11px;display:none}.hint{font-size:10px;color:#777}.diffs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.diffs button{margin:0;text-align:left;display:flex;flex-direction:column;gap:6px}.diffs span{font-size:11px;color:#c5a8a8;letter-spacing:0}.disabled{opacity:.45;cursor:not-allowed}.disabled small{display:block;font-size:9px;color:#f66}.rangeLabel{display:flex;justify-content:space-between;color:#aaa;font-size:11px;letter-spacing:1px;margin-top:16px}.card input[type=range]{accent-color:#a51e24;padding:0}.cut-scene-bg{animation:scenePan 6s ease-in-out infinite alternate}.cut-door{position:absolute;left:18%;top:12%;width:30%;height:75%;background:linear-gradient(90deg,#050505,#1b1110,#030303);border:2px solid #24191a;box-shadow:0 0 50px #000}.cut-door:after{content:"";position:absolute;right:12%;top:52%;width:8px;height:8px;background:#9b3030;border-radius:50%;box-shadow:0 0 18px #f22}.cut-shadow{position:absolute;right:20%;bottom:2%;width:18%;height:70%;background:#000;border-radius:50% 50% 10% 10%;filter:blur(3px);animation:shadowWalk 4s ease-in-out infinite}.cut-shadow:before{content:"";position:absolute;left:-35%;top:5%;width:170%;height:45%;border-radius:50%;background:#000}.cut-shadow:after{content:"";position:absolute;left:25%;top:12%;width:12%;height:55%;background:#090909;box-shadow:28px 0 0 #090909,56px 0 0 #090909,84px 0 0 #090909}.cut-card{backdrop-filter:blur(3px);position:relative;z-index:20;pointer-events:auto}.cut-scene-bg{pointer-events:none}@keyframes shadowWalk{0%,100%{transform:translateX(10%) scale(.96);opacity:.55}50%{transform:translateX(-22%) scale(1.03);opacity:.9}}
+</style></head><body>
+<div id="menu">
+<div class="screen active" id="titleScreen"><div class="title-art"><div class="moon"></div><div class="inn-silhouette"></div></div><div class="card title-card"><div class="small">鈴谷旅館 • A HORROR EXPERIENCE</div><h1>SUZUYA INN</h1><div class="sub">ESCAPE CHIYO</div><button id="begin">START</button><button class="ghostbtn" id="titleSettings">SETTINGS</button></div></div>
+<div class="screen" id="setupScreen"><div class="card"><div class="small">STEP 01 • IDENTITY</div><h2>WHO ENTERS THE INN?</h2><input id="name" maxlength="16" placeholder="PLAYER NAME"><button id="toDifficulty">CONTINUE</button><button class="ghostbtn back" data-back="titleScreen">BACK</button></div></div>
+<div class="screen" id="difficultyScreen"><div class="card"><div class="small">STEP 02 • SURVIVAL</div><h2>CHOOSE YOUR FATE</h2><div class="diffs"><button data-diff="easy"><b>LOST SOUL</b><span>Slow Chiyo • Gentle battery drain</span></button><button data-diff="normal"><b>RESTLESS</b><span>Balanced hunt • Normal battery</span></button><button data-diff="medium"><b>HAUNTED</b><span>Faster Chiyo • Faster drain</span></button><button data-diff="hard"><b>CURSED</b><span>Chiyo is relentless • Harsh battery</span></button></div><button class="ghostbtn back" data-back="setupScreen">BACK</button></div></div>
+<div class="screen" id="modeScreen"><div class="card"><div class="small">STEP 03 • GAME MODE</div><h2>SELECT EXPERIENCE</h2><button id="single">SINGLE PLAYER</button><button id="multi" class="disabled">MULTIPLAYER <small>COMING SOON</small></button><button class="ghostbtn" id="settings">SETTINGS</button><button class="ghostbtn" id="exit">EXIT</button></div></div>
+<div class="screen" id="settingsScreen"><div class="card"><div class="small">SETTINGS</div><h2>INN CONTROLS</h2><label class="rangeLabel">MOUSE SENSITIVITY <b id="sensVal">1.0x</b></label><input id="sens" type="range" min=".4" max="2" step=".1" value="1"><label class="rangeLabel">FLASHLIGHT BRIGHTNESS <b id="brightVal">100%</b></label><input id="bright" type="range" min=".6" max="1.5" step=".1" value="1"><button class="ghostbtn back" data-back="titleScreen">DONE</button></div></div>
+</div>
+<div id="cut" class="hidden"><div class="cut-scene-bg"><div class="cut-silhouette"></div><div class="cut-fog"></div></div><div class="card cut-card"><div id="cutTitle" class="small"></div><div id="cutText"></div><button id="cont">CONTINUE</button></div></div>
+<div id="hud" class="hidden"><div id="stats">PLAYER: <b id="pname"></b><br>KATASHIRO: <b id="count">0 / 10</b><br>FLASHLIGHT: <b id="bat">100%</b><div class="bar"><i id="batBar"></i></div><br>STAMINA: <b id="stam">100%</b><div class="bar stam"><i id="stamBar"></i></div></div><div id="cross">+</div><div id="msg">Find the four Katashiro dolls.</div><div id="v"></div></div>
+<div id="scare" class="hidden"><div><div id="face"><div class="hair"></div><div class="head"><i class="eye l"></i><i class="eye r"></i><i class="mouth"></i></div></div><h2>CHIYO FOUND YOU</h2><p>DON'T LOOK BACK.</p></div></div>
+<div id="end" class="hidden"><div class="card"><div class="small">THE WARD IS BROKEN</div><h1>YOU ESCAPED</h1><p>You made it out of Suzuya Inn before Chiyo could claim you.</p><button onclick="location.reload()">PLAY AGAIN</button></div></div>
+<div id="game"></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+// Lightweight self-contained ambience (no large embedded audio file).
+let audioCtx=null, ambienceGain=null;
+function startAmbience(){
+  if(audioCtx) return;
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    ambienceGain=audioCtx.createGain(); ambienceGain.gain.value=0.018; ambienceGain.connect(audioCtx.destination);
+    const osc=audioCtx.createOscillator(), lfo=audioCtx.createOscillator(), lfoGain=audioCtx.createGain();
+    osc.type='sine'; osc.frequency.value=42; lfo.type='sine'; lfo.frequency.value=.12; lfoGain.gain.value=8;
+    lfo.connect(lfoGain); lfoGain.connect(osc.frequency); osc.connect(ambienceGain); osc.start(); lfo.start();
+  }catch(e){}
+}
+
+let scene,camera,renderer,light,clock,running=false,locked=false,yaw=0,pitch=0,battery=100,on=true,got=0,chiyo,dolls=[],walls=[],colliders=[],keys={},name="Guest",stamina=100,level=0;
+const $=x=>document.getElementById(x),pos=new THREE.Vector3(6,1.6,6);
+function wall(x,z,w,d){let m=new THREE.Mesh(new THREE.BoxGeometry(w,3.2,d),new THREE.MeshStandardMaterial({color:0x30251b}));m.position.set(x,1.6,z);scene.add(m);walls.push(new THREE.Box3().setFromObject(m))}
+function buildChiyo(){
+  chiyo=new THREE.Group();
+  const skin=new THREE.MeshStandardMaterial({color:0xb8b0a6,roughness:1});
+  const hair=new THREE.MeshStandardMaterial({color:0x010101,roughness:1});
+  const dress=new THREE.MeshStandardMaterial({color:0x070606,roughness:1});
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.38,.72,2.2,24),dress);
+  body.position.y=1.1; chiyo.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.43,32,24),skin);
+  head.scale.set(.86,1.12,.78); head.position.y=2.45; chiyo.add(head);
+  const crown=new THREE.Mesh(new THREE.SphereGeometry(.49,24,16),hair);
+  crown.scale.set(1.04,.98,.92); crown.position.set(0,2.62,.08); chiyo.add(crown);
+  for(let i=-14;i<=14;i++){
+    const s=new THREE.Mesh(new THREE.CylinderGeometry(.025,.09,1.5+Math.random()*1.4,7),hair);
+    s.position.set(i*.052,1.75-Math.abs(i)*.008,.12+Math.abs(i)*.018);
+    s.rotation.z=i*.018; chiyo.add(s);
+  }
+  for(const x of [-.15,.15]){
+    const e=new THREE.Mesh(new THREE.SphereGeometry(.055,12,8),new THREE.MeshBasicMaterial({color:0x000000}));
+    e.scale.set(.7,1.8,.3); e.position.set(x,2.46,-.39); chiyo.add(e);
+  }
+  const mouth=new THREE.Mesh(new THREE.BoxGeometry(.2,.035,.025),new THREE.MeshBasicMaterial({color:0x250606}));
+  mouth.position.set(0,2.16,-.405); chiyo.add(mouth);
+  const aura=new THREE.PointLight(0x300000,1.2,6);
+  aura.position.set(0,1.6,.4); chiyo.add(aura);
+  chiyo.position.set(0,0,18); scene.add(chiyo);
+}
+
+function mat(color,rough=.8,metal=0){return new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});}
+function lantern(x,y,z,scale=1){
+  const g=new THREE.Group();
+  const frame=mat(0x2b130e,.7), paper=mat(0xe2b36b,.85);
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.34*scale,.30*scale,.78*scale,12),paper); body.position.y=.0; g.add(body);
+  const top=new THREE.Mesh(new THREE.CylinderGeometry(.39*scale,.39*scale,.07*scale,12),frame); top.position.y=.42*scale; g.add(top);
+  const bot=top.clone(); bot.position.y=-.42*scale; g.add(bot);
+  const glow=new THREE.PointLight(0xff9b4d,.62*scale,6*scale); glow.position.y=0; g.add(glow);
+  g.position.set(x,y,z); scene.add(g); return g;
+}
+function shojiPanel(x,y,z,rot=0){
+  const g=new THREE.Group(), frame=mat(0x3a2115,.8), paper=mat(0xcfc4a8,1);
+  const base=new THREE.Mesh(new THREE.BoxGeometry(2.6,2.55,.10),paper); g.add(base);
+  for(let i=-3;i<=3;i++){let v=new THREE.Mesh(new THREE.BoxGeometry(.055,2.45,.14),frame);v.position.x=i*.37;g.add(v);}
+  for(let i=-2;i<=2;i++){let h=new THREE.Mesh(new THREE.BoxGeometry(2.5,.055,.14),frame);h.position.y=i*.42;g.add(h);}
+  g.position.set(x,y,z);g.rotation.y=rot;scene.add(g); return g;
+}
+function tableSet(x,y,z){
+  const wood=mat(0x3a1d10,.72), dark=mat(0x170b08,.9);
+  const top=new THREE.Mesh(new THREE.BoxGeometry(2.2,.16,1.35),wood);top.position.set(x,y+.75,z);scene.add(top);
+  for(const dx of [-.85,.85])for(const dz of [-.45,.45]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.12,.75,.12),dark);leg.position.set(x+dx,y+.35,z+dz);scene.add(leg);}
+  const cushion=mat(0x6b2020,.95);
+  for(const dx of [-1.45,1.45]){const c=new THREE.Mesh(new THREE.BoxGeometry(.7,.22,.7),cushion);c.position.set(x+dx,y+.12,z);scene.add(c);}
+}
+function wallScroll(x,y,z,rot=0){
+  const g=new THREE.Group();const frame=mat(0x2a140d,.8), paper=mat(0xd7c8a8,1);
+  const p=new THREE.Mesh(new THREE.BoxGeometry(1.0,1.6,.045),paper);g.add(p);
+  const top=new THREE.Mesh(new THREE.BoxGeometry(1.15,.09,.08),frame);top.position.y=.84;g.add(top);const bot=top.clone();bot.position.y=-.84;g.add(bot);
+  for(let i=-1;i<=1;i++){const ink=new THREE.Mesh(new THREE.BoxGeometry(.05,1.2,.015),mat(0x20100d,1));ink.position.set(i*.18,0,.03);g.add(ink)}
+  g.position.set(x,y,z);g.rotation.y=rot;scene.add(g);
+}
+function plant(x,y,z){const pot=new THREE.Mesh(new THREE.CylinderGeometry(.28,.38,.45,12),mat(0x5a2618,.9));pot.position.set(x,y+.22,z);scene.add(pot);for(let i=0;i<7;i++){const leaf=new THREE.Mesh(new THREE.SphereGeometry(.22,8,6),mat(0x18351e,.95));leaf.scale.set(.45,1.3,.25);leaf.position.set(x+(Math.random()-.5)*.5,y+.7+Math.random()*.45,z+(Math.random()-.5)*.5);leaf.rotation.z=(Math.random()-.5)*1.4;scene.add(leaf)}}
+function roomDetail(y){
+  const fy=y+.01;
+  [-21,-7,7,21].forEach((z,i)=>{
+    for(const x of [-38,38]){
+      // tatami-like floor panels inside rooms
+      for(let ix=0;ix<3;ix++)for(let iz=0;iz<2;iz++){
+        const t=new THREE.Mesh(new THREE.BoxGeometry(5.5,.035,5.5),mat((ix+iz)%2?0x3c3325:0x463a29,.95));t.position.set(x+(ix-1)*5.7,fy+.02,z+(iz-.5)*5.6);scene.add(t);
+      }
+      tableSet(x,y,z);
+      wallScroll(x>0?x-0.2:x+0.2,y+1.9,z+1.9,x>0?-Math.PI/2:Math.PI/2);
+      lantern(x,y+2.65,z-1.2,.7);
+      if(i%2===0)plant(x+(x>0?-2.1:2.1),y,z-1.8);
+      shojiPanel(x+(x>0?-0.12:0.12),y+1.45,z-2.8,x>0?Math.PI/2:-Math.PI/2);
+    }
+  });
+}
+function mainHallDetails(y){
+  for(let z=-34;z<=34;z+=8){
+    lantern(-16,y+2.75,z,.62); lantern(16,y+2.75,z,.62);
+    wallScroll(-29.75,y+2.0,z,Math.PI/2); wallScroll(29.75,y+2.0,z,-Math.PI/2);
+  }
+  for(let z=-36;z<=36;z+=8){
+    const postL=new THREE.Mesh(new THREE.BoxGeometry(.28,3.2,.28),mat(0x3b2014,.72));postL.position.set(-28.5,y+1.6,z);scene.add(postL);
+    const postR=postL.clone();postR.position.x=28.5;scene.add(postR);
+  }
+  // red runner with subtle raised border
+  const runner=new THREE.Mesh(new THREE.BoxGeometry(6,.06,72),mat(0x5a1518,.9));runner.position.set(0,y+.035,0);scene.add(runner);
+  const trim=mat(0x8f5a34,.65);for(const x of [-3.05,3.05]){const q=new THREE.Mesh(new THREE.BoxGeometry(.06,.08,72),trim);q.position.set(x,y+.07,0);scene.add(q)}
+}
+function init(){
+scene=new THREE.Scene();scene.background=new THREE.Color(0x080604);scene.fog=new THREE.FogExp2(0x080604,.014);
+camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,180);
+renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'high-performance'});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(1);
+$("game").appendChild(renderer.domElement);
+scene.add(camera);
+clock=new THREE.Clock();
+// v11 flashlight: mounted directly to the camera so it always follows the player's view.
+light=new THREE.SpotLight(0xfff3d0,30,55,Math.PI/3.8,.38,1.0);
+light.position.set(0,0,-0.05);
+light.target.position.set(0,0,-24);
+light.castShadow=false;
+camera.add(light);
+camera.add(light.target);
+const flashlightFill=new THREE.PointLight(0xffe8c0,1.8,5,2);
+flashlightFill.position.set(0,-.03,.05);
+camera.add(flashlightFill);
+light.userData.fill=flashlightFill;
+light.intensity=on&&battery>0?30:0;
+scene.add(new THREE.AmbientLight(0x241812,.72));colliders=[];dolls=[];
+const fm=new THREE.MeshStandardMaterial({color:0x651719,roughness:.8}),wm=new THREE.MeshStandardMaterial({color:0x2a1910,roughness:.9}),pm=new THREE.MeshStandardMaterial({color:0xd8c8a6,roughness:1}),dm=new THREE.MeshStandardMaterial({color:0x110907,roughness:.9});
+function B(x,y,z,w,h,d,m,solid=true){let q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.position.set(x,y,z);scene.add(q);if(solid)colliders.push(new THREE.Box3().setFromObject(q));return q}
+function door(x,z,y,rot){let g=new THREE.Group(),f=new THREE.Mesh(new THREE.BoxGeometry(3,2.7,.2),wm),p=new THREE.Mesh(new THREE.BoxGeometry(2.5,2.4,.12),pm);g.add(f,p);for(let i=-3;i<=3;i++){let s=new THREE.Mesh(new THREE.BoxGeometry(.06,2.45,.08),wm);s.position.x=i*.36;g.add(s)}g.position.set(x,y+1.35,z);g.rotation.y=rot;scene.add(g)}
+const W=96,D=80,H=3.4;B(0,-.15,0,W,.3,D,fm,false);B(0,3.65,0,W,.3,D,fm,false);
+function shell(y){B(0,y+H/2,-40,W,H,.4,dm);B(0,y+H/2,40,W,H,.4,dm);B(-48,y+H/2,0,.4,H,D,dm);B(48,y+H/2,0,.4,H,D,dm)}
+shell(0);shell(3.8);
+// Real floor decks for both levels.
+B(0,-.15,0,W,.3,D,fm,false);B(0,3.65,0,W,.3,D,fm,false);
+roomDetail(0);roomDetail(3.8);mainHallDetails(0);mainHallDetails(3.8);
+function floor(y){[-21,-7,7,21].forEach(z=>{B(-30,y+H/2,z,36,H,.25,wm);B(30,y+H/2,z,36,H,.25,wm);door(-12.7,z,y,Math.PI/2);door(12.7,z,y,-Math.PI/2)});B(-30,y+H/2,-28,36,H,.25,wm);B(30,y+H/2,-28,36,H,.25,wm);B(-30,y+H/2,28,36,H,.25,wm);B(30,y+H/2,28,36,H,.25,wm)}
+floor(0);floor(3.8);
+// enclosed ceilings and Japanese-style structural beams
+B(0,3.25,0,W,.18,D,dm,false);B(0,7.05,0,W,.18,D,dm,false);
+for(let x=-44;x<=44;x+=8){B(x,3.05,0,.28,.35,D,wm,false);B(x,6.85,0,.28,.35,D,wm,false)}
+for(let z=-36;z<=36;z+=8){B(0,3.05,z,W,.25,.28,wm,false);B(0,6.85,z,W,.25,.28,wm,false)}
+// staircase / landing
+for(let i=0;i<16;i++)B(-2,.12+i*.24,31+i*.42,6,.24,1.05,wm,false);
+B(-5,1.9,34,.25,3.8,10,dm);B(5,1.9,34,.25,3.8,10,dm);
+for(const x of [-5.1,1.1]){const rail=new THREE.Mesh(new THREE.BoxGeometry(.16,1.15,9),mat(0x2c160e,.7));rail.position.set(x,1.35,34.2);rail.rotation.x=-Math.atan2(3.6,6.7);scene.add(rail);}
+B(-2,3.78,38,6,.16,4.0,wm,false);
+// reception
+B(0,.7,-34,14,1.4,2.6,wm,false);B(0,1.6,-34,10,1.2,.2,fm,false);
+function decorate(cx,cz,y){B(cx,y+.3,cz+3,4,.5,5,fm,false);B(cx,y+.7,cz+5.4,4,.8,.35,pm,false);B(cx+4,y+.7,cz-3,.9,1.3,1.8,wm,false)}
+[-21,-7,7,21].forEach(z=>{decorate(-38,z,0);decorate(38,z,0);decorate(-38,z,3.8);decorate(38,z,3.8)});
+for(let f=0;f<2;f++){
+  let y=1.9+f*3.8;
+  for(let z=-30;z<=30;z+=20){
+    for(let x of [-16,16]){
+      let l=B(x,y,z,.5,.7,.3,fm,false),p=new THREE.PointLight(0xff9955,.38,9);
+      p.position.copy(l.position);scene.add(p);
+    }
+  }
+  for(let z=-25;z<=25;z+=12)for(let x of [-46,46])B(x*.97,y,z,.08,1.8,2.1,pm,false)
+}
+[[-38,-21,0],[-38,7,0],[38,-7,0],[38,21,0],[0,22,0],[-38,-7,3.8],[38,-21,3.8],[38,7,3.8],[-38,21,3.8],[0,-18,3.8]].forEach((p,i)=>{let d=new THREE.Mesh(new THREE.BoxGeometry(.18,.72,.06),new THREE.MeshStandardMaterial({color:0xf3e7c6,emissive:0x301606}));d.position.set(p[0],p[2]+1.05,p[1]);d.userData.baseY=d.position.y;d.userData.phase=i*.6;scene.add(d);dolls.push(d);B(p[0],p[2]+.35,p[1],1.3,.7,1.3,dm,false)});
+pos.set(0,1.65,-25);level=0;camera.position.copy(pos);
+buildChiyo();
+}
+function updateStairLevel(){
+  // The staircase is at the north end of the inn. Walking through it smoothly raises/lowers the camera.
+  const onStairs=Math.abs(pos.x+2.0)<3.2 && pos.z>30.2 && pos.z<38.2;
+  if(onStairs){
+    const t=Math.max(0,Math.min(1,(pos.z-30.5)/7.0));
+    const y=1.65+t*3.8;
+    pos.y=y; level=t>.5?1:0;
+  } else if(pos.z>=38.2){ pos.y=5.45; level=1; }
+  else if(pos.z<=30.2 && level===1 && Math.abs(pos.x+2.0)<4.0){ pos.y=1.65; level=0; }
+}
+function resetStamina(){stamina=100;$("stam").textContent="100%";$("stamBar").style.width="100%";}
+function collide(p){
+  let b=new THREE.Box3(
+    new THREE.Vector3(p.x-.35,0,p.z-.35),
+    new THREE.Vector3(p.x+.35,3,p.z+.35)
+  );
+  return colliders.some(w=>b.intersectsBox(w));
+}
+function chiyoBlocked(p){
+  let b=new THREE.Box3(
+    new THREE.Vector3(p.x-.48,0,p.z-.48),
+    new THREE.Vector3(p.x+.48,3.05,p.z+.48)
+  );
+  return colliders.some(w=>b.intersectsBox(w));
+}
+function cut(t,x,next){
+  running=false;
+  $("cutTitle").textContent=t;
+  $("cutText").textContent=x;
+  $("cut").classList.remove("hidden");
+  const btn=$("cont");
+  btn.onclick=null;
+  btn.onclick=()=>{
+    btn.onclick=null;
+    $("cut").classList.add("hidden");
+    next();
+  };
+}
+
+let difficulty="normal", mouseSensitivity=1, brightness=1;
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
+$("begin").onclick=()=>{
+  const bgm=$("bgm");
+  bgm.volume=.45;
+  try{bgm.currentTime=.23}catch(e){}
+  const p=bgm.play();
+  if(p)p.then(()=>{try{bgm.currentTime=.23}catch(e){}});
+  showScreen("setupScreen");
+};
+$("toDifficulty").onclick=()=>{if(!$("name").value.trim())$("name").value="Guest";showScreen("difficultyScreen")};
+document.querySelectorAll("[data-diff]").forEach(b=>b.onclick=()=>{difficulty=b.dataset.diff;showScreen("modeScreen")});
+document.querySelectorAll(".back").forEach(b=>b.onclick=()=>showScreen(b.dataset.back));
+$("titleSettings").onclick=()=>showScreen("settingsScreen");
+$("settings").onclick=()=>showScreen("settingsScreen");
+$("sens").oninput=e=>{mouseSensitivity=+e.target.value;$("sensVal").textContent=mouseSensitivity.toFixed(1)+"x"};
+$("bright").oninput=e=>{brightness=+e.target.value;$("brightVal").textContent=Math.round(brightness*100)+"%"};
+$("exit").onclick=()=>{document.body.innerHTML='<div style="height:100vh;display:flex;align-items:center;justify-content:center;background:#000;color:#777;font-family:Arial">You can close this tab.</div>'};
+$("multi").onclick=()=>alert("Multiplayer is coming soon! This build is the single-player prototype.");
+$("single").onclick=()=>start();
+
+function start(){
+  try{
+    const old=document.getElementById("bgm");
+    if(old){old.pause();old.currentTime=0;}
+  }catch(e){}
+
+name=($("name").value.trim()||"Guest").slice(0,16);stamina=100;battery=100;on=true;got=0;
+$("pname").textContent=name;
+const bgm=$("bgm");
+bgm.pause();
+try{bgm.currentTime=0.23}catch(e){}
+init();$("menu").classList.add("hidden");running=false;
+cut("SUZUYA INN • 11:47 PM","The storm killed the village power. The gate slammed shut behind you. Somewhere upstairs, a girl is dragging her hair across the floor.",()=>{
+  cut("SOMETHING MOVED","You hear wet footsteps behind the paper walls. When you turn, there is nothing there. Then three long scratches appear on the door.",()=>{
+    cut("THE KATASHIRO","Four paper dolls are hidden around the inn. Cleanse them all and the shrine ward will break. Don't let Chiyo touch you.",()=>{
+      startGameAmbience();running=true;$("hud").classList.remove("hidden");
+      setTimeout(captureMouse,50);
+      requestAnimationFrame(loop);
+    });
+  });
+});
+}
+// v12 FPS mouse controls: the mouse belongs to the game while playing.
+// Clicking the game canvas captures the cursor; ESC releases it.
+document.addEventListener("pointerlockchange",()=>{
+  locked=document.pointerLockElement===renderer?.domElement;
+  if(locked){ document.body.style.cursor="none"; }
+  else { document.body.style.cursor=""; lastMouseX=null; lastMouseY=null; }
+});
+
+function captureMouse(){
+  startAmbience();
+  if(running && renderer && renderer.domElement && document.pointerLockElement!==renderer.domElement){
+    renderer.domElement.requestPointerLock();
+  }
+}
+
+document.addEventListener("click",e=>{
+  if(running && e.target===renderer?.domElement) captureMouse();
+});
+
+addEventListener("mousemove",e=>{
+  if(!running || !locked) return;
+  // movementX/Y are the correct FPS-camera deltas while pointer lock is active.
+  yaw-=e.movementX*.0028*mouseSensitivity;
+  pitch-=e.movementY*.0024*mouseSensitivity;
+  pitch=Math.max(-1.45,Math.min(1.45,pitch));
+});
+
+addEventListener("keydown",e=>{
+  if(["KeyW","KeyA","KeyS","KeyD","ShiftLeft","ShiftRight","KeyF"].includes(e.code)) e.preventDefault();
+  keys[e.code]=true;
+  if(e.code==="KeyF"&&!e.repeat){on=!on;light.intensity=on&&battery>0?30:0;if(light.userData.fill)light.userData.fill.intensity=on&&battery>0?1.8:0;}
+});
+addEventListener("keyup",e=>{keys[e.code]=false});addEventListener("resize",()=>{if(camera){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.25))}});$("start").onclick=start;
+
+let ambienceCtx=null, ambienceMaster=null, windNode=null;
+function startGameAmbience(){
+  try{
+    ambienceCtx=new (window.AudioContext||window.webkitAudioContext)();
+    ambienceMaster=ambienceCtx.createGain(); ambienceMaster.gain.value=.16; ambienceMaster.connect(ambienceCtx.destination);
+    const o=ambienceCtx.createOscillator(), g=ambienceCtx.createGain();
+    o.type="sine"; o.frequency.value=38; g.gain.value=.045; o.connect(g); g.connect(ambienceMaster); o.start();
+    const buffer=ambienceCtx.createBuffer(1, ambienceCtx.sampleRate*2, ambienceCtx.sampleRate);
+    const ch=buffer.getChannelData(0); for(let i=0;i<ch.length;i++) ch[i]=(Math.random()*2-1)*.22;
+    windNode=ambienceCtx.createBufferSource(); windNode.buffer=buffer; windNode.loop=true;
+    const wf=ambienceCtx.createBiquadFilter(); wf.type="lowpass"; wf.frequency.value=650;
+    const wg=ambienceCtx.createGain(); wg.gain.value=.035;
+    windNode.connect(wf); wf.connect(wg); wg.connect(ambienceMaster); windNode.start();
+    setInterval(()=>{
+      if(!running||!ambienceCtx)return;
+      const t=ambienceCtx.currentTime, c=ambienceCtx.createOscillator(), cg=ambienceCtx.createGain();
+      c.type="triangle"; c.frequency.setValueAtTime(90+Math.random()*70,t);
+      c.frequency.exponentialRampToValueAtTime(38,t+1.3);
+      cg.gain.setValueAtTime(.0001,t); cg.gain.exponentialRampToValueAtTime(.045,t+.08); cg.gain.exponentialRampToValueAtTime(.0001,t+1.4);
+      c.connect(cg); cg.connect(ambienceMaster); c.start(t); c.stop(t+1.5);
+    },7000);
+  }catch(e){}
+}
+function stopGameAmbience(){try{if(ambienceMaster)ambienceMaster.gain.value=0}catch(e){}}
+
+function horrorScream(){try{let c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain(),n=c.createOscillator(),ng=c.createGain();o.type="sawtooth";n.type="square";o.frequency.setValueAtTime(900,c.currentTime);o.frequency.exponentialRampToValueAtTime(95,c.currentTime+1.1);n.frequency.setValueAtTime(180,c.currentTime);n.frequency.exponentialRampToValueAtTime(55,c.currentTime+1.1);g.gain.setValueAtTime(.22,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+1.2);ng.gain.setValueAtTime(.12,c.currentTime);ng.gain.exponentialRampToValueAtTime(.001,c.currentTime+1.2);o.connect(g);g.connect(c.destination);n.connect(ng);ng.connect(c.destination);o.start();n.start();o.stop(c.currentTime+1.2);n.stop(c.currentTime+1.2)}catch(e){}}
+function scare(){horrorScream();stopGameAmbience();running=false;document.exitPointerLock?.();$("hud").classList.add("hidden");$("scare").classList.remove("hidden");setTimeout(()=>location.reload(),3500)}
+function loop(){
+ if(!running)return; requestAnimationFrame(loop);
+ let dt=Math.min(clock.getDelta(),.05);
+ camera.rotation.set(pitch,yaw,0,"YXZ");
+ const sprint=(keys.ShiftLeft||keys.ShiftRight)&&stamina>0;
+ let d=new THREE.Vector3((keys.KeyD?1:0)-(keys.KeyA?1:0),0,(keys.KeyS?1:0)-(keys.KeyW?1:0));
+ if(d.lengthSq())d.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
+ const diff={easy:{speed:4.2,sprint:1.55,drain:9,recover:24,chiyo:1.35},normal:{speed:4.6,sprint:1.7,drain:14,recover:19,chiyo:2.05},medium:{speed:4.9,sprint:1.82,drain:21,recover:15,chiyo:2.9},hard:{speed:5.2,sprint:1.95,drain:30,recover:11,chiyo:4.0}}[difficulty];
+ if(sprint&&d.lengthSq()){stamina=Math.max(0,stamina-diff.drain*dt);}else{stamina=Math.min(100,stamina+diff.recover*dt);}
+ const sp=diff.speed*(sprint?diff.sprint:1)*dt;
+ const nx=pos.clone();nx.x+=d.x*sp;if(!collide(nx))pos.x=nx.x;
+ const nz=pos.clone();nz.z+=d.z*sp;if(!collide(nz))pos.z=nz.z;
+ pos.x=Math.max(-46.2,Math.min(46.2,pos.x));pos.z=Math.max(-38.2,Math.min(38.2,pos.z));
+ updateStairLevel();camera.position.copy(pos);
+ if(on){battery=Math.max(0,battery-dt*({easy:.20,normal:.34,medium:.58,hard:.9}[difficulty]));if(!battery){on=false;light.intensity=0;if(light.userData.fill)light.userData.fill.intensity=0;}}
+ $("bat").textContent=Math.ceil(battery)+"%";$("batBar").style.width=battery+"%";
+ $("stam").textContent=Math.ceil(stamina)+"%";$("stamBar").style.width=stamina+"%";
+ dolls.forEach(q=>{if(q.visible){q.rotation.y+=.03;if(pos.distanceTo(q.position)<1.5){q.visible=false;got++;$("count").textContent=got+" / 10";$("msg").textContent=got===10?"RUN! THE EXIT IS OPEN.":"Katashiro cleansed. Chiyo is closer.";if(got===10){stopGameAmbience();running=false;document.exitPointerLock?.();$("hud").classList.add("hidden");$("end").classList.remove("hidden");return;}}}});
+ let v=new THREE.Vector3().subVectors(pos,chiyo.position);v.y=0;let dist=v.length();
+ if(dist<14)$("msg").textContent=dist<5?"CHIYO IS RIGHT BEHIND YOU.":"Something is watching you from the darkness.";
+ if(dist>1.2){
+   const chiyoStep=diff.chiyo*dt;
+   const nextChiyo=chiyo.position.clone().addScaledVector(v.normalize(),chiyoStep);
+   if(!chiyoBlocked(nextChiyo))chiyo.position.copy(nextChiyo);else{const sx=chiyo.position.clone();sx.x=nextChiyo.x;const sz=chiyo.position.clone();sz.z=nextChiyo.z;if(!chiyoBlocked(sx))chiyo.position.x=sx.x;if(!chiyoBlocked(sz))chiyo.position.z=sz.z;}
+   chiyo.lookAt(pos.x,chiyo.position.y,pos.z);
+ }else scare();
+ renderer.render(scene,camera);
+}</script>
+<script>
+(function(){
+  const c=document.getElementById("cont");
+  if(!c)return;
+  c.style.pointerEvents="auto";
+  c.style.position="relative";
+  c.style.zIndex="999";
+  c.addEventListener("click",function(){
+    const cut=document.getElementById("cut");
+    if(cut)cut.classList.add("hidden");
+  });
+})();
+</script>
+</body></html>
